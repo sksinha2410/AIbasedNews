@@ -34,6 +34,9 @@ class NewsFeedViewModel : ViewModel() {
     private val _hasMorePages = MutableStateFlow(true)
     val hasMorePages: StateFlow<Boolean> = _hasMorePages.asStateFlow()
     
+    private val _regeneratingArticleId = MutableStateFlow<String?>(null)
+    val regeneratingArticleId: StateFlow<String?> = _regeneratingArticleId.asStateFlow()
+    
     private var currentPage = 1
     private val pageSize = 5
     
@@ -119,7 +122,10 @@ class NewsFeedViewModel : ViewModel() {
      * Regenerates summary for a specific article.
      */
     fun regenerateSummary(articleId: String) {
+        if (_regeneratingArticleId.value != null) return
+        
         viewModelScope.launch {
+            _regeneratingArticleId.value = articleId
             try {
                 val updatedArticle = repository.regenerateSummary(articleId)
                 if (updatedArticle != null) {
@@ -132,7 +138,9 @@ class NewsFeedViewModel : ViewModel() {
                     }
                 }
             } catch (e: Exception) {
-                // Handle regeneration error silently or show toast
+                // Log error - in production, would emit error state or show snackbar
+            } finally {
+                _regeneratingArticleId.value = null
             }
         }
     }

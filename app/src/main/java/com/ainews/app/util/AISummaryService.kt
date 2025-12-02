@@ -14,12 +14,20 @@ import kotlin.random.Random
 object AISummaryService {
     
     /**
+     * Configuration flag to enable/disable simulated delays.
+     * Set to false in production or for testing to skip artificial delays.
+     */
+    var simulateDelays: Boolean = true
+    
+    /**
      * Generates a TL;DR summary and key takeaways for an article.
-     * Simulates AI processing with a delay.
+     * Simulates AI processing with a delay when simulateDelays is true.
      */
     suspend fun generateSummary(article: NewsArticle): NewsArticle {
-        // Simulate AI processing time (300-800ms)
-        delay(Random.nextLong(300, 800))
+        if (simulateDelays) {
+            // Simulate AI processing time (300-800ms)
+            delay(Random.nextLong(300, 800))
+        }
         
         return article.copy(
             tldr = generateTldr(article),
@@ -31,8 +39,10 @@ object AISummaryService {
      * Regenerates the summary for an article.
      */
     suspend fun regenerateSummary(article: NewsArticle): NewsArticle {
-        // Simulate regeneration with slightly longer delay
-        delay(Random.nextLong(400, 900))
+        if (simulateDelays) {
+            // Simulate regeneration with slightly longer delay
+            delay(Random.nextLong(400, 900))
+        }
         
         return article.copy(
             tldr = generateTldr(article),
@@ -44,8 +54,10 @@ object AISummaryService {
      * Generates a simplified, friendly version of the article content.
      */
     suspend fun generateSimplifiedContent(article: NewsArticle): NewsArticle {
-        // Simulate AI simplification processing
-        delay(Random.nextLong(500, 1000))
+        if (simulateDelays) {
+            // Simulate AI simplification processing
+            delay(Random.nextLong(500, 1000))
+        }
         
         return article.copy(
             simplifiedContent = simplifyContent(article)

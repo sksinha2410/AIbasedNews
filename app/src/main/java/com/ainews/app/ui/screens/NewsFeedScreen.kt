@@ -67,6 +67,7 @@ fun NewsFeedScreen(
     val refreshState by viewModel.refreshState.collectAsState()
     val isLoadingMore by viewModel.isLoadingMore.collectAsState()
     val hasMorePages by viewModel.hasMorePages.collectAsState()
+    val regeneratingArticleId by viewModel.regeneratingArticleId.collectAsState()
     
     val listState = rememberLazyListState()
     val pullToRefreshState = rememberPullToRefreshState()
@@ -145,6 +146,7 @@ fun NewsFeedScreen(
                         listState = listState,
                         isLoadingMore = isLoadingMore,
                         hasMorePages = hasMorePages,
+                        regeneratingArticleId = regeneratingArticleId,
                         onArticleClick = onArticleClick,
                         onRegenerateSummary = { articleId ->
                             viewModel.regenerateSummary(articleId)
@@ -240,6 +242,7 @@ private fun ArticleList(
     listState: androidx.compose.foundation.lazy.LazyListState,
     isLoadingMore: Boolean,
     hasMorePages: Boolean,
+    regeneratingArticleId: String?,
     onArticleClick: (NewsArticle) -> Unit,
     onRegenerateSummary: (String) -> Unit
 ) {
@@ -256,7 +259,8 @@ private fun ArticleList(
             NewsArticleCard(
                 article = article,
                 onArticleClick = onArticleClick,
-                onRegenerateSummary = onRegenerateSummary
+                onRegenerateSummary = onRegenerateSummary,
+                isRegenerating = regeneratingArticleId == article.id
             )
         }
         

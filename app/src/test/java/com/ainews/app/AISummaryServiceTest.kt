@@ -6,12 +6,19 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
+import org.junit.Before
 import org.junit.Test
 
 /**
  * Unit tests for the AI Summary Service.
  */
 class AISummaryServiceTest {
+
+    @Before
+    fun setup() {
+        // Disable delays for faster tests
+        AISummaryService.simulateDelays = false
+    }
 
     @Test
     fun `generateSummary returns article with tldr`() = runBlocking {

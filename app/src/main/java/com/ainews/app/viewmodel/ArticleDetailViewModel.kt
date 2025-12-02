@@ -30,6 +30,9 @@ class ArticleDetailViewModel : ViewModel() {
     private val _showOriginal = MutableStateFlow(false)
     val showOriginal: StateFlow<Boolean> = _showOriginal.asStateFlow()
     
+    private val _regenerationError = MutableStateFlow<String?>(null)
+    val regenerationError: StateFlow<String?> = _regenerationError.asStateFlow()
+    
     /**
      * Loads article details with simplified content.
      */
@@ -58,18 +61,28 @@ class ArticleDetailViewModel : ViewModel() {
         
         viewModelScope.launch {
             _isRegenerating.value = true
+            _regenerationError.value = null
             try {
                 val regenerated = repository.regenerateSimplifiedContent(currentArticle.id)
                 if (regenerated != null) {
                     _article.value = regenerated
                     _articleState.value = AISummaryState.Success(regenerated)
+                } else {
+                    _regenerationError.value = "Failed to regenerate content"
                 }
             } catch (e: Exception) {
-                // Handle error silently or show toast
+                _regenerationError.value = e.message ?: "An error occurred while regenerating"
             } finally {
                 _isRegenerating.value = false
             }
         }
+    }
+    
+    /**
+     * Clears the regeneration error.
+     */
+    fun clearRegenerationError() {
+        _regenerationError.value = null
     }
     
     /**
